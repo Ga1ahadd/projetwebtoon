@@ -2,9 +2,13 @@ import { Injectable } from '@angular/core';
 import { Apollo } from 'apollo-angular';
 import gql from 'graphql-tag';
 import { map } from 'rxjs/operators';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class WebtoonService {
+  private webtoonsSubject = new BehaviorSubject<any[]>([]);
+  private webtoonsLoaded = false;
+
   constructor(private apollo: Apollo) {}
 
   getAll(forceRefresh: boolean = false) {
@@ -23,7 +27,21 @@ export class WebtoonService {
         }
       `,
       fetchPolicy: forceRefresh ? 'network-only' : 'cache-first'
-    }).pipe(map((res: any) => res.data.webtoons));
+    }).pipe(
+      map((res: any) => {
+        const data = res.data.webtoons;
+        this.webtoonsSubject.next(data);
+        this.webtoonsLoaded = true;
+        return data;
+      })
+    );
+  }
+
+  getAllObservable() {
+    if (!this.webtoonsLoaded) {
+      this.getAll(true).subscribe(); // force initial chargement
+    }
+    return this.webtoonsSubject.asObservable();
   }
 
   ajouterWebtoon(input: {
@@ -66,7 +84,14 @@ export class WebtoonService {
         }
       `,
       variables: input
-    }).pipe(map((res: any) => res.data.ajouterWebtoon));
+    }).pipe(
+      map((res: any) => {
+        const nouveau = res.data.ajouterWebtoon;
+        const courants = this.webtoonsSubject.value;
+        this.webtoonsSubject.next([nouveau, ...courants]);
+        return nouveau;
+      })
+    );
   }
 
   supprimerWebtoon(id: string) {
@@ -77,7 +102,15 @@ export class WebtoonService {
         }
       `,
       variables: { id }
-    });
+    }).pipe(
+      map((res: any) => {
+        if (res.data.supprimerWebtoon) {
+          const miseAJour = this.webtoonsSubject.value.filter(w => w.id !== id);
+          this.webtoonsSubject.next(miseAJour);
+        }
+        return res.data.supprimerWebtoon;
+      })
+    );
   }
 
   getOne(id: string) {
@@ -114,4 +147,42 @@ export class WebtoonService {
       variables: { webtoonId, numero_chapitre }
     }).pipe(map((res: any) => res.data.acheterChapitre));
   }
+
+  modifierWebtoon(id: string, updates: any) {
+    return this.apollo.mutate({
+      mutation: gql`
+        mutation ModifierWebtoon(
+          $id: ID!,
+          $titre: String,
+          $resume: String,
+          $genre: String,
+          $nb_chapitres: Int,
+          $nb_chapitres_gratuits: Int,
+          $auteur: String,
+          $image: String
+        ) {
+          modifierWebtoon(
+            id: $id,
+            titre: $titre,
+            resume: $resume,
+            genre: $genre,
+            nb_chapitres: $nb_chapitres,
+            nb_chapitres_gratuits: $nb_chapitres_gratuits,
+            auteur: $auteur,
+            image: $image
+          ) {
+            id
+            titre
+            genre
+            auteur
+            nb_chapitres
+            nb_chapitres_gratuits
+            image
+          }
+        }
+      `,
+      variables: { id, ...updates }
+    }).pipe(map((res: any) => res.data.modifierWebtoon));
+  }
+
 }

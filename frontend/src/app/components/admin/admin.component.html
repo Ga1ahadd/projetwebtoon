@@ -4,53 +4,114 @@
   {{ message }}
 </div>
 
-<button (click)="afficherFormulaireAjout = !afficherFormulaireAjout">
-  {{ afficherFormulaireAjout ? 'Annuler' : 'Ajouter un Webtoon' }}
-</button>
-
-<div *ngIf="afficherFormulaireAjout" class="form-ajout">
-  <h3>Ajouter un Webtoon</h3>
-
-  <label>Titre :
-    <input [(ngModel)]="titre" />
-  </label>
-
-  <label>Résumé :
-    <textarea [(ngModel)]="resume"></textarea>
-  </label>
-
-  <label>Genre :
-    <select [(ngModel)]="genre">
-      <option *ngFor="let g of genres" [value]="g">{{ g }}</option>
-    </select>
-  </label>
-
-  <label>Chapitres totaux :
-    <input type="number" [(ngModel)]="nb_chapitres" />
-  </label>
-
-  <label>Chapitres gratuits :
-    <input type="number" [(ngModel)]="nb_chapitres_gratuits" />
-  </label>
-
-  <label>Auteur :
-    <input [(ngModel)]="auteur" />
-  </label>
-
-  <label>Image (chemin) :
-    <input [(ngModel)]="image" />
-  </label>
-
-  <button (click)="ajouterWebtoon()">Valider</button>
-</div>
+<button (click)="afficherPopupAjout = true">Ajouter un Webtoon</button>
 
 <hr />
 
-<ul>
-  <li *ngFor="let w of webtoons"
-    [class.highlighted]="w.id === highlightedId">
-  <strong>{{ w.titre }}</strong> ({{ w.genre }})
-  <button (click)="modifierWebtoon(w)">Modifier</button>
-  <button (click)="supprimerWebtoon(w.id)">Supprimer</button>
-</li>
-</ul>
+<table class="table-webtoons">
+  <thead>
+    <tr>
+      <th>Titre</th>
+      <th>Genre</th>
+      <th>Auteur</th>
+      <th>Chapitres</th>
+      <th>Gratuits</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let w of webtoons" [class.highlighted]="w.id === highlightedId">
+      <td>{{ w.titre }}</td>
+      <td>{{ w.genre }}</td>
+      <td>{{ w.auteur }}</td>
+      <td>{{ w.nb_chapitres }}</td>
+      <td>{{ w.nb_chapitres_gratuits }}</td>
+      <td>
+        <button (click)="modifierWebtoon(w)">Modifier</button>
+        <button (click)="supprimerWebtoon(w.id)">Supprimer</button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="popup-edition" *ngIf="afficherPopupAjout">
+  <div class="popup-content">
+    <h3>Ajouter un Webtoon</h3>
+
+    <label>Titre :
+      <input [(ngModel)]="titre" />
+    </label>
+
+    <label>Résumé :
+      <textarea [(ngModel)]="resume"></textarea>
+    </label>
+
+    <label>Genre :
+      <select [(ngModel)]="genre">
+        <option *ngFor="let g of genres" [value]="g">{{ g }}</option>
+      </select>
+    </label>
+
+    <label>Chapitres totaux :
+      <input type="number" [(ngModel)]="nb_chapitres" />
+    </label>
+
+    <label>Chapitres gratuits :
+      <input type="number" [(ngModel)]="nb_chapitres_gratuits" />
+    </label>
+
+    <label>Auteur :
+      <input [(ngModel)]="auteur" />
+    </label>
+
+    <label>Image (chemin) :
+      <input [(ngModel)]="image" />
+    </label>
+
+    <div class="popup-buttons">
+      <button (click)="ajouterWebtoon()">Valider</button>
+      <button (click)="afficherPopupAjout = false">Annuler</button>
+    </div>
+  </div>
+</div>
+
+<div class="popup-edition" *ngIf="afficherPopupEdition">
+  <div class="popup-content">
+    <h3>Modifier le Webtoon</h3>
+
+    <label>Titre :
+      <input [(ngModel)]="webtoonEnEdition.titre" />
+    </label>
+
+    <label>Résumé :
+      <textarea [(ngModel)]="webtoonEnEdition.resume"></textarea>
+    </label>
+
+    <label>Genre :
+      <select [(ngModel)]="webtoonEnEdition.genre">
+        <option *ngFor="let g of genres" [value]="g">{{ g }}</option>
+      </select>
+    </label>
+
+    <label>Chapitres totaux :
+      <input type="number" [(ngModel)]="webtoonEnEdition.nb_chapitres" />
+    </label>
+
+    <label>Chapitres gratuits :
+      <input type="number" [(ngModel)]="webtoonEnEdition.nb_chapitres_gratuits" />
+    </label>
+
+    <label>Auteur :
+      <input [(ngModel)]="webtoonEnEdition.auteur" />
+    </label>
+
+    <label>Image (chemin) :
+      <input [(ngModel)]="webtoonEnEdition.image" />
+    </label>
+
+    <div class="popup-buttons">
+      <button (click)="validerModification()">Enregistrer</button>
+      <button (click)="annulerModification()">Annuler</button>
+    </div>
+  </div>
+</div>

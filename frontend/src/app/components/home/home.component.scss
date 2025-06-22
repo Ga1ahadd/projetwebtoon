@@ -5,7 +5,7 @@
   padding: 20px;
 }
 
-.pagination {
+::ng-deep .pagination {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -15,7 +15,7 @@
   button {
     padding: 10px 20px;
     font-size: 1rem;
-    background-color: #3f51b5;
+    background-color: #00DF63;
     color: white;
     border: none;
     border-radius: 6px;
@@ -23,7 +23,7 @@
     transition: background-color 0.2s ease;
 
     &:hover:not(:disabled) {
-      background-color: #303f9f;
+      background-color: #009643;
     }
 
     &:disabled {

@@ -13,7 +13,7 @@ export class HomeComponent implements OnInit {
   constructor(private webtoonService: WebtoonService) {}
 
   ngOnInit(): void {
-    this.webtoonService.getAll().subscribe((webtoons) => {
+    this.webtoonService.getAllObservable().subscribe((webtoons: any[]) => {
       this.webtoons = webtoons;
     });
   }
@@ -27,9 +27,9 @@ export class HomeComponent implements OnInit {
     return Math.ceil(this.webtoons.length / this.pageSize);
   }
 
-  changerPage(p: number) {
-    if (p >= 1 && p <= this.totalPages) {
-      this.page = p;
+  changerPage(page: number): void {
+    if (page >= 1 && page <= this.totalPages) {
+      this.page = page;
     }
   }
 }

@@ -11,7 +11,7 @@ import { GENRES } from 'app/constants/genres';
 })
 export class AdminComponent implements OnInit {
   webtoons: any[] = [];
-  afficherFormulaireAjout = false;
+  afficherPopupAjout = false;
 
   genres = GENRES;
   titre = '';
@@ -24,8 +24,10 @@ export class AdminComponent implements OnInit {
 
   message: string = '';
   messageType: 'success' | 'error' | '' = '';
-
   highlightedId: string | null = null;
+
+  webtoonEnEdition: any = null;
+  afficherPopupEdition = false;
 
   constructor(
     private webtoonService: WebtoonService,
@@ -43,8 +45,8 @@ export class AdminComponent implements OnInit {
   }
 
   chargerWebtoons() {
-    this.webtoonService.getAll().subscribe((res) => {
-      this.webtoons = res;
+    this.webtoonService.getAll().subscribe((res: any[]) => {
+      this.webtoons = [...res].sort((a: any, b: any) => a.titre.localeCompare(b.titre));
     });
   }
 
@@ -60,7 +62,7 @@ export class AdminComponent implements OnInit {
     }).subscribe({
       next: (newWebtoon) => {
         if (newWebtoon?.titre) {
-          this.webtoons = [newWebtoon, ...this.webtoons];
+          this.webtoons = [...[newWebtoon, ...this.webtoons]].sort((a: any, b: any) => a.titre.localeCompare(b.titre));
           this.highlightedId = newWebtoon.id;
 
           this.message = 'Webtoon ajouté';
@@ -71,7 +73,7 @@ export class AdminComponent implements OnInit {
           this.messageType = 'error';
         }
         this.viderFormulaire();
-        this.afficherFormulaireAjout = false;
+        this.afficherPopupAjout = false;
         this.clearMessage();
       },
       error: () => {
@@ -102,7 +104,38 @@ export class AdminComponent implements OnInit {
   }
 
   modifierWebtoon(webtoon: any) {
-    alert(`Modifier "${webtoon.titre}" – à faire plus tard`);
+    this.webtoonEnEdition = { ...webtoon };
+    this.afficherPopupEdition = true;
+  }
+
+  validerModification() {
+    const { id, ...modifs } = this.webtoonEnEdition;
+    this.webtoonService.modifierWebtoon(id, modifs).subscribe({
+      next: (updated) => {
+        const index = this.webtoons.findIndex(w => w.id === updated.id);
+        if (index !== -1) {
+          this.webtoons[index] = updated;
+          this.webtoons = [...this.webtoons].sort((a: any, b: any) => a.titre.localeCompare(b.titre));
+        }
+
+        this.message = 'Webtoon modifié';
+        this.messageType = 'success';
+        this.afficherPopupEdition = false;
+        this.clearMessage();
+        this.highlightedId = updated.id;
+        this.clearHighlight();
+      },
+      error: () => {
+        this.message = 'Erreur lors de la modification.';
+        this.messageType = 'error';
+        this.clearMessage();
+      }
+    });
+  }
+
+  annulerModification() {
+    this.webtoonEnEdition = null;
+    this.afficherPopupEdition = false;
   }
 
   viderFormulaire() {
