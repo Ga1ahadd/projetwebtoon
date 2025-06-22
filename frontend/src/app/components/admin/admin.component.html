@@ -1,0 +1,56 @@
+<h2>Interface Admin – Gestion des Webtoons</h2>
+
+<div *ngIf="message" [ngClass]="messageType" class="popup-message">
+  {{ message }}
+</div>
+
+<button (click)="afficherFormulaireAjout = !afficherFormulaireAjout">
+  {{ afficherFormulaireAjout ? 'Annuler' : 'Ajouter un Webtoon' }}
+</button>
+
+<div *ngIf="afficherFormulaireAjout" class="form-ajout">
+  <h3>Ajouter un Webtoon</h3>
+
+  <label>Titre :
+    <input [(ngModel)]="titre" />
+  </label>
+
+  <label>Résumé :
+    <textarea [(ngModel)]="resume"></textarea>
+  </label>
+
+  <label>Genre :
+    <select [(ngModel)]="genre">
+      <option *ngFor="let g of genres" [value]="g">{{ g }}</option>
+    </select>
+  </label>
+
+  <label>Chapitres totaux :
+    <input type="number" [(ngModel)]="nb_chapitres" />
+  </label>
+
+  <label>Chapitres gratuits :
+    <input type="number" [(ngModel)]="nb_chapitres_gratuits" />
+  </label>
+
+  <label>Auteur :
+    <input [(ngModel)]="auteur" />
+  </label>
+
+  <label>Image (chemin) :
+    <input [(ngModel)]="image" />
+  </label>
+
+  <button (click)="ajouterWebtoon()">Valider</button>
+</div>
+
+<hr />
+
+<ul>
+  <li *ngFor="let w of webtoons"
+    [class.highlighted]="w.id === highlightedId">
+  <strong>{{ w.titre }}</strong> ({{ w.genre }})
+  <button (click)="modifierWebtoon(w)">Modifier</button>
+  <button (click)="supprimerWebtoon(w.id)">Supprimer</button>
+</li>
+</ul>

@@ -1,1 +1,24 @@
-<p>register works!</p>
+<div class="register-container">
+  <h2>Inscription</h2>
+
+  <form (ngSubmit)="onSubmit()">
+    <div>
+      <label for="pseudo">Pseudo</label>
+      <input id="pseudo" [(ngModel)]="pseudo" name="pseudo" required />
+    </div>
+
+    <div>
+      <label for="email">Email</label>
+      <input id="email" [(ngModel)]="email" name="email" type="email" required />
+    </div>
+
+    <div>
+      <label for="mot_de_passe">Mot de passe</label>
+      <input id="mot_de_passe" [(ngModel)]="mot_de_passe" name="mot_de_passe" type="password" required />
+    </div>
+
+    <button type="submit">S'inscrire</button>
+  </form>
+
+  <div *ngIf="error" class="error">{{ error }}</div>
+</div>

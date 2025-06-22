@@ -17,12 +17,7 @@ module.exports = gql`
     image: String
     nb_chapitres: Int!
     nb_chapitres_gratuits: Int!
-    auteur: Auteur
-  }
-
-  type Auteur {
-    id: ID!
-    nom: String!
+    auteur: String!
   }
 
   type Achat {
@@ -56,7 +51,8 @@ module.exports = gql`
       genre: String
       nb_chapitres: Int!
       nb_chapitres_gratuits: Int!
-      auteurId: ID!
+      auteur: String!
+      image: String
     ): Webtoon
 
     modifierWebtoon(
@@ -66,6 +62,8 @@ module.exports = gql`
       genre: String
       nb_chapitres: Int
       nb_chapitres_gratuits: Int
+      auteur: String
+      image: String
     ): Webtoon
 
     supprimerWebtoon(id: ID!): Boolean

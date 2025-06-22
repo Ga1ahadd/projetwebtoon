@@ -7,6 +7,8 @@ import { WebtoonService } from 'app/services/webtoon.service';
 })
 export class HomeComponent implements OnInit {
   webtoons: any[] = [];
+  page = 1;
+  pageSize = 5;
 
   constructor(private webtoonService: WebtoonService) {}
 
@@ -14,5 +16,20 @@ export class HomeComponent implements OnInit {
     this.webtoonService.getAll().subscribe((webtoons) => {
       this.webtoons = webtoons;
     });
+  }
+
+  get paginatedWebtoons(): any[] {
+    const start = (this.page - 1) * this.pageSize;
+    return this.webtoons.slice(start, start + this.pageSize);
+  }
+
+  get totalPages(): number {
+    return Math.ceil(this.webtoons.length / this.pageSize);
+  }
+
+  changerPage(p: number) {
+    if (p >= 1 && p <= this.totalPages) {
+      this.page = p;
+    }
   }
 }

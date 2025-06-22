@@ -1,10 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-webtoon-card',
   templateUrl: './webtoon-card.component.html',
-  styleUrl: './webtoon-card.component.scss'
+  styleUrls: ['./webtoon-card.component.scss']
 })
 export class WebtoonCardComponent {
-
+  @Input() webtoon: any;
 }

@@ -1,0 +1,22 @@
+.popup-message {
+  padding: 10px;
+  margin: 15px 0;
+  border-radius: 5px;
+  text-align: center;
+  font-weight: bold;
+
+  &.success {
+    background-color: #d4edda;
+    color: #155724;
+  }
+
+  &.error {
+    background-color: #f8d7da;
+    color: #721c24;
+  }
+}
+
+.highlighted {
+  background-color: #dff0d8;
+  transition: background-color 0.5s ease;
+}

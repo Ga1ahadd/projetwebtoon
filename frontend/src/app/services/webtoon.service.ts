@@ -7,7 +7,7 @@ import { map } from 'rxjs/operators';
 export class WebtoonService {
   constructor(private apollo: Apollo) {}
 
-  getAll() {
+  getAll(forceRefresh: boolean = false) {
     return this.apollo.query({
       query: gql`
         query {
@@ -18,13 +18,66 @@ export class WebtoonService {
             nb_chapitres
             nb_chapitres_gratuits
             image
-            auteur {
-              nom
-            }
+            auteur
           }
         }
-      `
+      `,
+      fetchPolicy: forceRefresh ? 'network-only' : 'cache-first'
     }).pipe(map((res: any) => res.data.webtoons));
+  }
+
+  ajouterWebtoon(input: {
+    titre: string;
+    resume?: string;
+    genre?: string;
+    nb_chapitres: number;
+    nb_chapitres_gratuits: number;
+    auteur: string;
+    image?: string;
+  }) {
+    return this.apollo.mutate({
+      mutation: gql`
+        mutation AjouterWebtoon(
+          $titre: String!,
+          $resume: String,
+          $genre: String,
+          $nb_chapitres: Int!,
+          $nb_chapitres_gratuits: Int!,
+          $auteur: String!,
+          $image: String
+        ) {
+          ajouterWebtoon(
+            titre: $titre,
+            resume: $resume,
+            genre: $genre,
+            nb_chapitres: $nb_chapitres,
+            nb_chapitres_gratuits: $nb_chapitres_gratuits,
+            auteur: $auteur,
+            image: $image
+          ) {
+            id
+            titre
+            genre
+            image
+            auteur
+            nb_chapitres
+            nb_chapitres_gratuits
+          }
+        }
+      `,
+      variables: input
+    }).pipe(map((res: any) => res.data.ajouterWebtoon));
+  }
+
+  supprimerWebtoon(id: string) {
+    return this.apollo.mutate({
+      mutation: gql`
+        mutation SupprimerWebtoon($id: ID!) {
+          supprimerWebtoon(id: $id)
+        }
+      `,
+      variables: { id }
+    });
   }
 
   getOne(id: string) {
@@ -39,9 +92,7 @@ export class WebtoonService {
             nb_chapitres
             nb_chapitres_gratuits
             image
-            auteur {
-              nom
-            }
+            auteur
           }
         }
       `,

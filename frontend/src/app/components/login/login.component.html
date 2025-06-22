@@ -1,1 +1,19 @@
-<p>login works!</p>
+<div class="login-container">
+  <h2>Connexion</h2>
+
+  <form (ngSubmit)="onSubmit()">
+    <div>
+      <label for="pseudo">Pseudo</label>
+      <input id="pseudo" [(ngModel)]="pseudo" name="pseudo" required />
+    </div>
+
+    <div>
+      <label for="mot_de_passe">Mot de passe</label>
+      <input id="mot_de_passe" [(ngModel)]="mot_de_passe" name="mot_de_passe" type="password" required />
+    </div>
+
+    <button type="submit">Se connecter</button>
+  </form>
+
+  <div *ngIf="error" class="error">{{ error }}</div>
+</div>

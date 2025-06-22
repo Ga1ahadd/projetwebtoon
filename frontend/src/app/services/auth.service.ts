@@ -5,6 +5,8 @@ import { map } from 'rxjs/operators';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
+  currentUser: any = null;
+
   constructor(private apollo: Apollo) {}
 
   register(pseudo: string, email: string, mot_de_passe: string) {
@@ -15,11 +17,19 @@ export class AuthService {
             id
             pseudo
             email
+            role
+            pieces
           }
         }
       `,
       variables: { pseudo, email, mot_de_passe }
-    }).pipe(map((result: any) => result.data.register));
+    }).pipe(
+      map((res: any) => {
+        this.currentUser = res.data.register;
+        localStorage.setItem('user', JSON.stringify(this.currentUser));
+        return this.currentUser;
+      })
+    );
   }
 
   login(pseudo: string, mot_de_passe: string) {
@@ -30,11 +40,32 @@ export class AuthService {
             id
             pseudo
             email
+            role
             pieces
           }
         }
       `,
       variables: { pseudo, mot_de_passe }
-    }).pipe(map((result: any) => result.data.login));
+    }).pipe(
+      map((res: any) => {
+        this.currentUser = res.data.login;
+        localStorage.setItem('user', JSON.stringify(this.currentUser));
+        return this.currentUser;
+      })
+    );
+  }
+
+  logout() {
+    this.currentUser = null;
+    localStorage.removeItem('user');
+  }
+
+  getUser() {
+    if (this.currentUser) return this.currentUser;
+    const stored = localStorage.getItem('user');
+    if (stored) {
+      this.currentUser = JSON.parse(stored);
+    }
+    return this.currentUser;
   }
 }

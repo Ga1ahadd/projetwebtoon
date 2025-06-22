@@ -1,1 +1,8 @@
-<p>webtoon-card works!</p>
+<a [routerLink]="['/webtoon', webtoon.id]" class="card-link">
+  <div class="card">
+    <img [src]="'assets/' + webtoon.image" alt="{{ webtoon.titre }}" />
+    <h3>{{ webtoon.titre }}</h3>
+    <p>{{ webtoon.genre }}</p>
+    <small>Par {{ webtoon.auteur }}</small>
+  </div>
+</a>

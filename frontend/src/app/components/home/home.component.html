@@ -1,1 +1,19 @@
-<p>home works!</p>
+<div class="webtoon-list">
+  <app-webtoon-card
+    *ngFor="let w of paginatedWebtoons"
+    [webtoon]="w">
+  </app-webtoon-card>
+</div>
+
+<div class="pagination" *ngIf="totalPages > 1">
+  <button (click)="changerPage(page - 1)" [disabled]="page === 1">Précédent</button>
+
+  <button
+    *ngFor="let p of [].constructor(totalPages); let i = index"
+    (click)="changerPage(i + 1)"
+    [class.active]="page === i + 1">
+    {{ i + 1 }}
+  </button>
+
+  <button (click)="changerPage(page + 1)" [disabled]="page === totalPages">Suivant</button>
+</div>

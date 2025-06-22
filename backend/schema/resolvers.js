@@ -1,6 +1,5 @@
 const User = require('../models/User');
 const Webtoon = require('../models/Webtoon');
-const Auteur = require('../models/Auteur');
 const Achat = require('../models/Achat');
 
 module.exports = {
@@ -10,7 +9,7 @@ module.exports = {
     user: (_, { id }) => User.findById(id),
 
     webtoons: async () => {
-      return await Webtoon.find(); // Pas de .populate ici
+      return await Webtoon.find();
     },
     webtoon: async (_, { id }) => {
       return await Webtoon.findById(id);
@@ -34,13 +33,24 @@ module.exports = {
 
   Mutation: {
     register: async (_, { pseudo, email, mot_de_passe }) => {
+      const existingPseudo = await User.findOne({ pseudo });
+      if (existingPseudo) {
+        throw new Error("Ce pseudo est déjà utilisé.");
+      }
+
+      const existingEmail = await User.findOne({ email });
+      if (existingEmail) {
+        throw new Error("Cet email est déjà utilisé.");
+      }
+
       const user = new User({
         pseudo,
         email,
         mot_de_passe,
-        pieces: 0,
+        pieces: 10,
         role: 'utilisateur'
       });
+
       return await user.save();
     },
 
@@ -63,7 +73,7 @@ module.exports = {
       genre,
       nb_chapitres,
       nb_chapitres_gratuits,
-      auteurId,
+      auteur,
       image
     }) => {
       const webtoon = new Webtoon({
@@ -72,7 +82,7 @@ module.exports = {
         genre,
         nb_chapitres,
         nb_chapitres_gratuits,
-        auteur: auteurId,
+        auteur, // auteur est maintenant une string
         image
       });
       return await webtoon.save();
@@ -122,15 +132,5 @@ module.exports = {
   Achat: {
     user: (achat) => User.findById(achat.user),
     webtoon: (achat) => Webtoon.findById(achat.webtoon)
-  },
-
-  Webtoon: {
-    auteur: async (webtoon) => {
-      if (!webtoon.auteur) return null;
-      if (typeof webtoon.auteur === 'object' && webtoon.auteur.nom) {
-        return webtoon.auteur; // déjà peuplé
-      }
-      return await Auteur.findById(webtoon.auteur);
-    }
   }
 };

@@ -1,1 +1,12 @@
-<p>webtoon-detail works!</p>
+<div *ngIf="loading">Chargement...</div>
+<div *ngIf="error">{{ error }}</div>
+
+<div *ngIf="webtoon && !loading" class="detail-container">
+  <img [src]="'assets/' + webtoon.image" alt="{{ webtoon.titre }}">
+  <h1>{{ webtoon.titre }}</h1>
+  <p><strong>Genre :</strong> {{ webtoon.genre }}</p>
+  <p><strong>Chapitres :</strong> {{ webtoon.nb_chapitres }}</p>
+  <p><strong>Auteur :</strong> {{ webtoon.auteur }}</p>
+  <p><strong>Résumé :</strong></p>
+  <p>{{ webtoon.resume }}</p>
+</div>
