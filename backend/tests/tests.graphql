@@ -1,0 +1,82 @@
+# 🔐 Connexion d’un utilisateur
+mutation {
+  login(pseudo: "dokja", mot_de_passe: "1234") {
+    id
+    pseudo
+    pieces
+  }
+}
+
+# 🙋‍♂️ Récupérer les infos de l'utilisateur connecté
+query {
+  me {
+    id
+    pseudo
+    email
+    pieces
+    role
+  }
+}
+
+# 📚 Lister tous les webtoons
+query {
+  webtoons {
+    id
+    titre
+    genre
+    nb_chapitres
+    nb_chapitres_gratuits
+    image
+    auteur {
+      nom
+    }
+  }
+}
+
+# 📘 Récupérer un webtoon par ID
+query {
+  webtoon(id: "COLLE_Ici_ID_DU_WEBTOON") {
+    titre
+    resume
+    auteur {
+      nom
+    }
+  }
+}
+
+# 💰 Ajouter des pièces à l’utilisateur connecté
+mutation {
+  ajouterPieces(montant: 10) {
+    id
+    pseudo
+    pieces
+  }
+}
+
+# 🛒 Acheter un chapitre payant
+mutation {
+  acheterChapitre(webtoonId: "COLLE_Ici_ID_DU_WEBTOON", numero_chapitre: 6) {
+    id
+    numero_chapitre
+    createdAt
+    webtoon {
+      titre
+    }
+  }
+}
+
+# 🔁 Vérifier si l’utilisateur a déjà acheté un chapitre
+query {
+  aDejaAchat(webtoonId: "COLLE_Ici_ID_DU_WEBTOON", numero_chapitre: 6)
+}
+
+# 🧾 Voir mes achats
+query {
+  mesAchats {
+    numero_chapitre
+    webtoon {
+      titre
+    }
+    createdAt
+  }
+}
