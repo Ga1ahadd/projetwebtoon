@@ -16,8 +16,9 @@ module.exports = {
 
     mesAchats: async (_, __, context) => {
       if (!context.user) throw new Error("Non authentifié");
-      return await Achat.find({ user: context.user._id });
+      return await Achat.find({ user: context.user._id }).sort({ createdAt: -1 });
     },
+
 
     aDejaAchat: async (_, { webtoonId, numero_chapitre }, context) => {
       if (!context.user) throw new Error("Non authentifié");
@@ -133,7 +134,11 @@ module.exports = {
   },
 
   Achat: {
-    user: (achat) => User.findById(achat.user),
-    webtoon: (achat) => Webtoon.findById(achat.webtoon)
+    user: async (achat) => {
+      return await User.findById(achat.user);
+    },
+    webtoon: async (achat) => {
+      return await Webtoon.findById(achat.webtoon);
+    }
   }
 };

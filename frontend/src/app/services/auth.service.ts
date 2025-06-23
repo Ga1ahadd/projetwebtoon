@@ -37,20 +37,25 @@ export class AuthService {
       mutation: gql`
         mutation Login($pseudo: String!, $mot_de_passe: String!) {
           login(pseudo: $pseudo, mot_de_passe: $mot_de_passe) {
-            id
-            pseudo
-            email
-            role
-            pieces
+            user {
+              id
+              pseudo
+              email
+              role
+              pieces
+            }
+            token
           }
         }
       `,
       variables: { pseudo, mot_de_passe }
     }).pipe(
       map((res: any) => {
-        this.currentUser = res.data.login;
-        localStorage.setItem('user', JSON.stringify(this.currentUser));
-        return this.currentUser;
+        const { user, token } = res.data.login;
+        this.currentUser = user;
+        localStorage.setItem('user', JSON.stringify(user));
+        localStorage.setItem('token', token);
+        return user;
       })
     );
   }
@@ -58,6 +63,7 @@ export class AuthService {
   logout() {
     this.currentUser = null;
     localStorage.removeItem('user');
+    localStorage.removeItem('token');
   }
 
   getUser() {
@@ -67,5 +73,9 @@ export class AuthService {
       this.currentUser = JSON.parse(stored);
     }
     return this.currentUser;
+  }
+
+  getToken(): string | null {
+    return localStorage.getItem('token');
   }
 }

@@ -9,4 +9,19 @@
   <p><strong>Auteur :</strong> {{ webtoon.auteur }}</p>
   <p><strong>Résumé :</strong></p>
   <p>{{ webtoon.resume }}</p>
+
+  <p><strong>Liste des chapitres :</strong></p>
+  <div *ngFor="let num of [].constructor(webtoon.nb_chapitres); let i = index">
+    <div>
+      Chapitre {{ i + 1 }}
+      <span *ngIf="(i + 1) <= webtoon.nb_chapitres_gratuits || achatsEffectues.includes(i + 1)">
+        ✅ Débloqué
+      </span>
+      <button
+        *ngIf="(i + 1) > webtoon.nb_chapitres_gratuits && !achatsEffectues.includes(i + 1)"
+        (click)="acheter(i + 1)">
+        Acheter (1💰)
+      </button>
+    </div>
+  </div>
 </div>

@@ -26,7 +26,7 @@ export class UserService {
   ajouterPieces(montant: number) {
     return this.apollo.mutate({
       mutation: gql`
-        mutation($montant: Int!) {
+        mutation AjouterPieces($montant: Int!) {
           ajouterPieces(montant: $montant) {
             id
             pieces
@@ -36,6 +36,7 @@ export class UserService {
       variables: { montant }
     }).pipe(map((res: any) => res.data.ajouterPieces));
   }
+
 
   mesAchats() {
     return this.apollo.query({
@@ -54,4 +55,22 @@ export class UserService {
       `
     }).pipe(map((res: any) => res.data.mesAchats));
   }
+
+  getCurrentUser() {
+    return this.apollo.query({
+      query: gql`
+        query {
+          me {
+            id
+            pseudo
+            email
+            role
+            pieces
+          }
+        }
+      `,
+      fetchPolicy: 'network-only'
+    }).pipe(map((res: any) => res.data.me));
+  }
+
 }

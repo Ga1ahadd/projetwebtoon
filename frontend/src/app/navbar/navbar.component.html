@@ -9,7 +9,6 @@
 
     <ng-container *ngIf="isLoggedIn">
       <li><a routerLink="/profil">Compte ({{ pseudo }})</a></li>
-      <li><a routerLink="/acheter">Acheter des pièces</a></li>
       <li *ngIf="isAdmin"><a routerLink="/gestion">Gestion</a></li>
       <li><a href="#" (click)="logout()">Déconnexion</a></li>
     </ng-container>

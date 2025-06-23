@@ -7,6 +7,7 @@ import { FormsModule } from '@angular/forms';
 import { Apollo, provideApollo } from 'apollo-angular';
 import { HttpLink } from 'apollo-angular/http';
 import { InMemoryCache } from '@apollo/client/core';
+import { setContext } from '@apollo/client/link/context';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -43,9 +44,20 @@ import { AdminComponent } from './components/admin/admin.component';
   providers: [
     provideApollo(() => {
       const httpLink = inject(HttpLink);
+
+      const authLink = setContext((_, { headers }) => {
+        const token = localStorage.getItem('token');
+        return {
+          headers: {
+            ...headers,
+            Authorization: token ? `Bearer ${token}` : ''
+          }
+        };
+      });
+
       return {
         cache: new InMemoryCache(),
-        link: httpLink.create({ uri: 'http://localhost:4000/graphql' })
+        link: authLink.concat(httpLink.create({ uri: 'http://localhost:4000/graphql' }))
       };
     }),
     provideAnimationsAsync()

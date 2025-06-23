@@ -4,7 +4,44 @@
   <ul>
     <li><strong>Pseudo :</strong> {{ user.pseudo }}</li>
     <li><strong>Email :</strong> {{ user.email }}</li>
-    <li><strong>Pièces :</strong> {{ user.pieces }}</li>
-    <li><strong>Rôle :</strong> {{ user.role }}</li>
   </ul>
+
+  <h2>Créditer mon compte</h2>
+
+  <div class="ajout-pieces">
+    <label>Nombre de pièces à ajouter :</label>
+    <input type="number" [(ngModel)]="montantAPayer" />
+
+    <button (click)="ajouterPieces()">Ajouter</button>
+  </div>
+
+  <div *ngIf="message" [ngClass]="messageType" class="message-pieces">
+    {{ message }}
+  </div>
+
+  <p>Vous avez actuellement <strong>{{ user.pieces }}</strong> pièces.</p>
+
+  <h2>Historique des achats</h2>
+
+  <table *ngIf="achats.length > 0; else aucunAchat" class="table-achats">
+    <thead>
+      <tr>
+        <th>Webtoon</th>
+        <th>Chapitre</th>
+        <th>Date</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let achat of achats">
+        <td>{{ achat.webtoon.titre }}</td>
+        <td>{{ achat.numero_chapitre }}</td>
+        <td>{{ achat.createdAt | date: 'short' }}</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <ng-template #aucunAchat>
+    <p>Vous n'avez encore rien acheté.</p>
+  </ng-template>
+
 </div>
