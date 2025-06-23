@@ -27,6 +27,12 @@ module.exports = {
         numero_chapitre
       });
       return !!achat;
+    },
+
+    achatsParWebtoon: async (_, { webtoonId }, context) => {
+      if (!context.user) throw new Error("Non authentifié");
+      const achats = await Achat.find({ user: context.user._id, webtoon: webtoonId });
+      return achats.map(a => a.numero_chapitre);
     }
   },
 

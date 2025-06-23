@@ -44,6 +44,7 @@ module.exports = gql`
 
     mesAchats: [Achat]
     aDejaAchat(webtoonId: ID!, numero_chapitre: Int!): Boolean
+    achatsParWebtoon(webtoonId: ID!): [Int!]!
   }
 
   type Mutation {
