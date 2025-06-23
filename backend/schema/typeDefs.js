@@ -7,6 +7,7 @@ module.exports = gql`
     email: String!
     pieces: Int!
     role: String!
+    token: String
   }
 
   type Webtoon {
@@ -28,6 +29,11 @@ module.exports = gql`
     createdAt: String!
   }
 
+  type AuthPayload {
+    user: User!
+    token: String!
+  }
+
   type Query {
     users: [User]
     me: User
@@ -42,7 +48,7 @@ module.exports = gql`
 
   type Mutation {
     register(pseudo: String!, email: String!, mot_de_passe: String!): User
-    login(pseudo: String!, mot_de_passe: String!): User
+    login(pseudo: String!, mot_de_passe: String!): AuthPayload
     ajouterPieces(montant: Int!): User
 
     ajouterWebtoon(

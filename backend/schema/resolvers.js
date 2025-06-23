@@ -1,19 +1,18 @@
+const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const Webtoon = require('../models/Webtoon');
 const Achat = require('../models/Achat');
 
+const JWT_SECRET = process.env.JWT_SECRET;
+
 module.exports = {
   Query: {
-    users: () => User.find(),
+    users: async () => await User.find(),
     me: (_, __, context) => context.user,
     user: (_, { id }) => User.findById(id),
 
-    webtoons: async () => {
-      return await Webtoon.find();
-    },
-    webtoon: async (_, { id }) => {
-      return await Webtoon.findById(id);
-    },
+    webtoons: async () => await Webtoon.find(),
+    webtoon: async (_, { id }) => await Webtoon.findById(id),
 
     mesAchats: async (_, __, context) => {
       if (!context.user) throw new Error("Non authentifié");
@@ -34,14 +33,10 @@ module.exports = {
   Mutation: {
     register: async (_, { pseudo, email, mot_de_passe }) => {
       const existingPseudo = await User.findOne({ pseudo });
-      if (existingPseudo) {
-        throw new Error("Ce pseudo est déjà utilisé.");
-      }
+      if (existingPseudo) throw new Error("Ce pseudo est déjà utilisé.");
 
       const existingEmail = await User.findOne({ email });
-      if (existingEmail) {
-        throw new Error("Cet email est déjà utilisé.");
-      }
+      if (existingEmail) throw new Error("Cet email est déjà utilisé.");
 
       const user = new User({
         pseudo,
@@ -57,7 +52,9 @@ module.exports = {
     login: async (_, { pseudo, mot_de_passe }) => {
       const user = await User.findOne({ pseudo, mot_de_passe });
       if (!user) throw new Error('Identifiants invalides');
-      return user;
+
+      const token = jwt.sign({ _id: user._id }, JWT_SECRET, { expiresIn: '7d' });
+      return { user, token };
     },
 
     ajouterPieces: async (_, { montant }, context) => {
@@ -82,7 +79,7 @@ module.exports = {
         genre,
         nb_chapitres,
         nb_chapitres_gratuits,
-        auteur, // auteur est maintenant une string
+        auteur,
         image
       });
       return await webtoon.save();

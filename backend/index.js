@@ -3,25 +3,35 @@ const express = require('express');
 const { ApolloServer } = require('apollo-server-express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const jwt = require('jsonwebtoken');
 
 const typeDefs = require('./schema/typeDefs');
 const resolvers = require('./schema/resolvers');
+const User = require('./models/User');
 
 async function startServer() {
   const app = express();
   app.use(cors());
 
-const server = new ApolloServer({
-  typeDefs,
-  resolvers,
-  context: async ({ req }) => {
-    const pseudo = req.headers['x-user'];
-    if (!pseudo) return {};
+  const server = new ApolloServer({
+    typeDefs,
+    resolvers,
+    context: async ({ req }) => {
+      const authHeader = req.headers.authorization || '';
+      const token = authHeader.replace('Bearer ', '');
 
-    const user = await User.findOne({ pseudo });
-    return { user };
-  },
-});
+      if (!token) return {};
+
+      try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const user = await User.findById(decoded._id);
+        return { user };
+      } catch (err) {
+        console.error('❌ Erreur de vérification du token:', err.message);
+        return {};
+      }
+    }
+  });
 
   await server.start();
   server.applyMiddleware({ app });
