@@ -36,3 +36,17 @@
     font-weight: bold;
   }
 }
+
+.filtres {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.filtres input,
+.filtres select {
+  padding: 0.5rem;
+  font-size: 1rem;
+}

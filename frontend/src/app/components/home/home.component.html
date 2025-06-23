@@ -1,3 +1,16 @@
+<div class="filtres">
+  <input
+    type="text"
+    placeholder="Rechercher par titre..."
+    [(ngModel)]="filtreTitre"
+    (input)="filtrerWebtoons()" />
+
+  <select [(ngModel)]="filtreGenre" (change)="filtrerWebtoons()">
+    <option value="">Tous les genres</option>
+    <option *ngFor="let genre of genresDisponibles" [value]="genre">{{ genre }}</option>
+  </select>
+</div>
+
 <div class="webtoon-list">
   <app-webtoon-card
     *ngFor="let w of paginatedWebtoons"
